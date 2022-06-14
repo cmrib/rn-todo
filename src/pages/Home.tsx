@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Alert } from 'react-native';
 import { Header } from '../components/Header';
 import { Task, TasksList } from '../components/TasksList';
 import { TodoInput } from '../components/TodoInput';
 
 export function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
+
+  const showRepeatedTaskAlert = () => {
+    return Alert.alert(
+      'Task já cadastrada',
+      'Você não pode cadastrar uma task com o mesmo nome',
+      [{
+        text: 'Ok'
+      }]
+    )
+  }
 
   function handleAddTask(newTaskTitle: string) {
     //TODO - add new task
@@ -14,7 +24,11 @@ export function Home() {
       title: newTaskTitle,
       done: false
     }
-    setTasks(oldState => [...oldState, newTask])
+    if (tasks.some(task => task.title === newTask.title)) {
+      showRepeatedTaskAlert()
+    } else {
+      setTasks(oldState => [...oldState, newTask])
+    }
   }
 
   function handleToggleTaskDone(id: number) {
